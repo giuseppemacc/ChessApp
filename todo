@@ -9,8 +9,9 @@ todo:
     [x] fixare bug che quando stacchi il Bluetooth con la connessione attiva non si aggiorna lo stato della connessione su false
     [x] schermata Gioca (creare CustomRadio e relatisve funzionalità di scelta)
     [x] modifica della scacchiera quando arrivano i valori opportuni
-    [] trovare un sistema per scrivere con vs code ed eseguire su raspberry
-    [] gestione del progetto con github
+    [x] trovare un sistema per scrivere con vs code ed eseguire su raspberry:
+        parzialmente risolto caricando ogni volta la repo su git e poi clonandola ed eseguendola su rp
+    [x] gestione del progetto con github
         
 Problema:
     [x] non so come cazzo gestirmi i widget ed i parametri per la connessione ble
