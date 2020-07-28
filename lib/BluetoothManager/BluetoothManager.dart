@@ -1,0 +1,84 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+
+class BluetoothManager extends ChangeNotifier {
+  String _recived = "";
+  BluetoothConnection connection;
+
+  String get recived => _recived;
+  bool get isConnected => connection != null && connection.isConnected;
+
+  BluetoothState bluetoothState = BluetoothState.UNKNOWN;
+  bool connectionState = false;
+
+  void initBluetoothState() {
+    FlutterBluetoothSerial.instance.state.then((state) {
+      bluetoothState = state;
+      notifyListeners();
+    });
+
+    FlutterBluetoothSerial.instance
+        .onStateChanged()
+        .listen((BluetoothState state) {
+      bluetoothState = state;
+      if (!state.isEnabled) {
+        connectionState = false;
+      }
+      notifyListeners();
+    });
+  }
+
+  void connect(BluetoothDevice device) {
+    BluetoothConnection.toAddress(device.address).then((_connection) {
+      connection = _connection;
+      connectionState = isConnected;
+      notifyListeners();
+      connection.input.listen(_onDataReceived).onDone(() {
+        connectionState = isConnected;
+        notifyListeners();
+      });
+    }).catchError((error) {});
+  }
+
+  void _onDataReceived(Uint8List data) {
+    // Allocate buffer for parsed data
+    int backspacesCounter = 0;
+    data.forEach((byte) {
+      if (byte == 8 || byte == 127) {
+        backspacesCounter++;
+      }
+    });
+    Uint8List buffer = Uint8List(data.length - backspacesCounter);
+    int bufferIndex = buffer.length;
+
+    // Apply backspace control character
+    backspacesCounter = 0;
+    for (int i = data.length - 1; i >= 0; i--) {
+      if (data[i] == 8 || data[i] == 127) {
+        backspacesCounter++;
+      } else {
+        if (backspacesCounter > 0) {
+          backspacesCounter--;
+        } else {
+          buffer[--bufferIndex] = data[i];
+        }
+      }
+    }
+
+    _recived = String.fromCharCodes(buffer);
+    notifyListeners();
+  }
+
+  void send(String text) async {
+    text = text.trim();
+    try {
+      connection.output.add(utf8.encode(text + "\r\n"));
+      await connection.output.allSent;
+    } catch (e) {}
+    notifyListeners();
+  }
+}

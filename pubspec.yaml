@@ -1,0 +1,37 @@
+name: ChessApp
+description: A new Flutter project.
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_bluetooth_serial: ^0.2.2
+  provider: ^3.0.0+1
+
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - contents/images/
+    - contents/images/chesspieces/
+    - contents/images/chesspieces/alpha/
+    - contents/images/chesspieces/chess24/
+    - contents/images/chesspieces/dilena/
+    - contents/images/chesspieces/leipzig/
+    - contents/images/chesspieces/metro/
+    - contents/images/chesspieces/symbol/
+    - contents/images/chesspieces/uscf/
