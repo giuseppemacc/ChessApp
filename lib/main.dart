@@ -9,7 +9,7 @@ class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Automatic asd 2",
+      title: "Automatic asd 4",
       theme: ThemeData(primarySwatch: Colors.green),
       home: SafeArea(child: MainPage()),
     );
