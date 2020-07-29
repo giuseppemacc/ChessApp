@@ -10,7 +10,7 @@ class Chessboard extends StatefulWidget {
 class _Chessboard extends State<Chessboard> {
   static Map chessboard = {
     "bpn": [
-      List<String>(2),
+      ["bQ", "bQ"],
       List<String>(2),
       List<String>(2),
       List<String>(2),
@@ -21,17 +21,17 @@ class _Chessboard extends State<Chessboard> {
       List<String>(2),
     ], //[List<String>(9), List<String>(9)],
     "grid": [
+      ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
+      ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
       List<String>(8),
       List<String>(8),
       List<String>(8),
       List<String>(8),
-      List<String>(8),
-      List<String>(8),
-      List<String>(8),
-      List<String>(8),
+      ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
+      ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
     ],
     "wpn": [
-      List<String>(2),
+      ["wQ", "wQ"],
       List<String>(2),
       List<String>(2),
       List<String>(2),
@@ -72,7 +72,7 @@ class _Chessboard extends State<Chessboard> {
           Grid(
             width: 35,
             height: 250,
-            color: Colors.grey,
+            //color: Colors.grey,
             row: 9,
             column: 2,
             piece_height: 15,
@@ -102,7 +102,7 @@ class _Chessboard extends State<Chessboard> {
           Grid(
             width: 35,
             height: 250,
-            color: Colors.amber[50],
+            //color: Colors.amber[50],
             row: 9,
             column: 2,
             piece_height: 15,
