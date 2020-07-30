@@ -1,5 +1,6 @@
+import './AdvantageBar.dart';
 import 'package:flutter/material.dart';
-import 'BluetoothManager/BluetoothManager.dart';
+import './BluetoothManager/BluetoothManager.dart';
 import 'package:provider/provider.dart';
 
 class Chessboard extends StatefulWidget {
@@ -8,17 +9,11 @@ class Chessboard extends StatefulWidget {
 }
 
 class _Chessboard extends State<Chessboard> {
+  double vantage = 50;
   static Map chessboard = {
     "bpn": [
-      ["bQ", "bQ"],
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
+      ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
+      ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
     ], //[List<String>(9), List<String>(9)],
     "grid": [
       ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
@@ -31,15 +26,8 @@ class _Chessboard extends State<Chessboard> {
       ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
     ],
     "wpn": [
-      ["wQ", "wQ"],
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
-      List<String>(2),
+      ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
+      ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
     ],
   };
 
@@ -60,6 +48,11 @@ class _Chessboard extends State<Chessboard> {
         setPiece("grid", int.parse(rec[3]), int.parse(rec[5]), rec[7] + rec[8]);
         print("Scacchiera aggiornata");
       });
+    } else if (Provider.of<BluetoothManager>(context).recived.startsWith("V")) {
+      setState(() {
+        vantage = double.parse(
+            Provider.of<BluetoothManager>(context).recived.substring(2));
+      });
     }
   }
 
@@ -67,47 +60,73 @@ class _Chessboard extends State<Chessboard> {
   Widget build(BuildContext context) {
     bleSetPiece();
     return Container(
-      child: Row(
+      child: ListView(
+        //shrinkWrap: true,
+        //mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          Grid(
-            width: 35,
-            height: 250,
-            //color: Colors.grey,
-            row: 9,
-            column: 2,
-            piece_height: 15,
-            piece_width: 15,
-            grid_type: "bpn",
+          Row(
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("contents/images/board.png"),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+                child: Grid(
+                  width: 320,
+                  height: 320,
+                  row: 8,
+                  column: 8,
+                  piece_height: 32,
+                  piece_width: 32,
+                  grid_type: "grid",
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: AdvantageBar(
+                  width: 10,
+                  height: 300,
+                  w_vantage: vantage,
+                ),
+              ),
+            ],
           ),
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("contents/images/chessboard.png"),
-                fit: BoxFit.fill,
+          Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                border: Border.all(),
+                //borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: <Widget>[
+                    Grid(
+                      width: 250,
+                      height: 40,
+                      row: 2,
+                      column: 8,
+                      piece_height: 20,
+                      piece_width: 20,
+                      grid_type: "wpn",
+                    ),
+                    Grid(
+                      width: 250,
+                      height: 40,
+                      row: 2,
+                      column: 8,
+                      piece_height: 20,
+                      piece_width: 20,
+                      grid_type: "bpn",
+                    ),
+                  ],
+                ),
               ),
             ),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Grid(
-                width: 250,
-                height: 250,
-                row: 8,
-                column: 8,
-                piece_height: 20,
-                piece_width: 20,
-                grid_type: "grid",
-              ),
-            ),
-          ),
-          Grid(
-            width: 35,
-            height: 250,
-            //color: Colors.amber[50],
-            row: 9,
-            column: 2,
-            piece_height: 15,
-            piece_width: 15,
-            grid_type: "wpn",
           ),
         ],
       ),
@@ -160,7 +179,7 @@ class _GridState extends State<Grid> {
                   child: Image.asset(
                       /*TODO: levare grid_type (string) come parametro e mettere direttamente un array bidimensionale (List) da cui pescare il valore
                     questo per permettere di creare una scacchiera personalizzata al posto di utilizzare un immagine*/
-                      "contents/images/chesspieces/symbol/${_Chessboard.chessboard[widget.grid_type][y][x]}.png"),
+                      "contents/images/chesspieces/128x128/${_Chessboard.chessboard[widget.grid_type][y][x]}.png"),
                 ),
               );
             }),

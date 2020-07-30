@@ -235,7 +235,7 @@ class _SelectGameModeState extends State<SelectGameMode> {
                 )
               : ListView(
                   children: <Widget>[
-                    Text("gli fsk sono fsk ma senza fsk"),
+                    Text("..."),
                   ],
                 ),
     );
