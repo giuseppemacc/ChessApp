@@ -87,5 +87,7 @@ class BluetoothManager extends ChangeNotifier {
       await connection.output.allSent;
     } catch (e) {}
     notifyListeners();
+
+    sent = text;
   }
 }

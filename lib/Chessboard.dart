@@ -2,6 +2,7 @@ import './AdvantageBar.dart';
 import 'package:flutter/material.dart';
 import './BluetoothManager/BluetoothManager.dart';
 import 'package:provider/provider.dart';
+import './CustomRadio.dart';
 
 class Chessboard extends StatefulWidget {
   @override
@@ -9,7 +10,6 @@ class Chessboard extends StatefulWidget {
 }
 
 class _Chessboard extends State<Chessboard> {
-  static bool freePos = false;
   double vantage = 50;
   static Map chessboard = {
     "bpn": [
@@ -31,6 +31,16 @@ class _Chessboard extends State<Chessboard> {
       ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
     ],
   };
+
+  // questi due variabili servono solo per il gioca posizione
+  List<RadioStructure> bwSelection = [
+    RadioStructure(
+        pathImage: "contents/images/chesspieces/chess24/wK.png", value: "W"),
+    RadioStructure(
+        pathImage: "contents/images/chesspieces/chess24/bK.png", value: "B"),
+  ];
+
+  String bwValue = "";
 
   void setPiece(String type_string, int x, int y, String value) {
     chessboard[type_string][y][x] = value;
@@ -59,13 +69,16 @@ class _Chessboard extends State<Chessboard> {
 
   @override
   Widget build(BuildContext context) {
+    for (RadioStructure item in bwSelection) {
+      if (item.state == true) {
+        bwValue = item.value;
+      }
+    }
     bleSetPiece();
     return Container(
       child: ListView(
-        //shrinkWrap: true,
-        //mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          (Provider.of<BluetoothManager>(context).sent == "GP")
+          (Provider.of<BluetoothManager>(context).sent == "GP-FREE")
               ? Padding(
                   padding: EdgeInsets.only(bottom: 5, top: 10),
                   child: Text(
@@ -153,6 +166,56 @@ class _Chessboard extends State<Chessboard> {
               ),
             ),
           ),
+          (Provider.of<BluetoothManager>(context).sent == "GP-FREE")
+              ? Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          child: Text("Gioca con:"),
+                          padding: EdgeInsets.only(right: 10),
+                        ),
+                        Row(
+                          children: List.generate(2, (i) {
+                            return Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                child: InkWell(
+                                  child: CustomRadio(bwSelection[i]),
+                                  onTap: () {
+                                    setState(() {
+                                      bwSelection.forEach(
+                                          (element) => element.state = false);
+                                      bwSelection[i].state = true;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          }),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      child: Container(
+                        width: 100,
+                        height: 40,
+                        child: RaisedButton(
+                          onPressed: () => {
+                            Provider.of<BluetoothManager>(context)
+                                .send("GP-$bwValue")
+                          },
+                          child: Text("Gioca"),
+                        ),
+                      ),
+                      padding: EdgeInsets.only(top: 10),
+                    ),
+                  ],
+                )
+              : Container(),
         ],
       ),
     );

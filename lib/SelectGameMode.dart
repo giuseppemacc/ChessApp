@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'BluetoothManager/BluetoothManager.dart';
+import './CustomRadio.dart';
 
 class SelectGameMode extends StatefulWidget {
   @override
@@ -74,8 +75,9 @@ class _SelectGameModeState extends State<SelectGameMode> {
                   child: Text("Gioca Posizione"),
                   onPressed: () {
                     setState(() {
-                      selection[0] = "GP";
-                      Provider.of<BluetoothManager>(context).sent = "GP";
+                      selection[0] = "GP-FREE";
+                      Provider.of<BluetoothManager>(context).sent = "GP-FREE";
+                      Provider.of<BluetoothManager>(context).send("GP-FREE");
                       int count = 0;
                       Navigator.of(context).popUntil((_) => count++ >= 2);
                     });
@@ -239,29 +241,6 @@ class _SelectGameModeState extends State<SelectGameMode> {
               : null,
     );
   }
-}
-
-class CustomRadio extends StatelessWidget {
-  final RadioStructure radioItem;
-  CustomRadio(this.radioItem);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: radioItem.state ? Colors.grey[350] : null,
-      child: FittedBox(
-        fit: BoxFit.fitWidth,
-        child: Image.asset(radioItem.pathImage),
-      ),
-    );
-  }
-}
-
-class RadioStructure {
-  bool state;
-  final String pathImage;
-  final String value;
-  RadioStructure({this.state = false, this.pathImage, this.value});
 }
 
 //questa funzione serve per invertire gli state true di ogni RadioStructure delle due righe in base ad un controllo
