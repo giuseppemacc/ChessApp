@@ -124,7 +124,36 @@ class _Chessboard extends State<Chessboard> {
                   IconButton(
                     icon: Icon(Icons.settings),
                     onPressed: () => {
-                      //TODO: apri poupap con scelta di rotazione di scacchiera, resa,
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  ListTile(
+                                    title: Text("Ruota Scacchiera"),
+                                    trailing: IconButton(
+                                      icon: Icon(Icons.import_export),
+                                      onPressed: () {
+                                        // send some value to rotate this chessboard
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                  ListTile(
+                                    title: Text("Arrenditi"),
+                                    trailing: IconButton(
+                                      icon: Icon(Icons.cancel),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          })
                     },
                   ),
                 ],
@@ -211,7 +240,7 @@ class _Chessboard extends State<Chessboard> {
                           child: Text("Gioca"),
                         ),
                       ),
-                      padding: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
                     ),
                   ],
                 )
