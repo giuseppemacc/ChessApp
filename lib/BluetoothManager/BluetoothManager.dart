@@ -7,10 +7,17 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class BluetoothManager extends ChangeNotifier {
   String _recived = "";
+  String _sent = "";
   BluetoothConnection connection;
 
+  String get sent => _sent;
   String get recived => _recived;
   bool get isConnected => connection != null && connection.isConnected;
+
+  set sent(String value) {
+    _sent = value;
+    notifyListeners();
+  }
 
   BluetoothState bluetoothState = BluetoothState.UNKNOWN;
   bool connectionState = false;

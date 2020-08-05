@@ -9,6 +9,7 @@ class Chessboard extends StatefulWidget {
 }
 
 class _Chessboard extends State<Chessboard> {
+  static bool freePos = false;
   double vantage = 50;
   static Map chessboard = {
     "bpn": [
@@ -64,6 +65,20 @@ class _Chessboard extends State<Chessboard> {
         //shrinkWrap: true,
         //mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
+          (Provider.of<BluetoothManager>(context).sent == "GP")
+              ? Padding(
+                  padding: EdgeInsets.only(bottom: 5, top: 10),
+                  child: Text(
+                    "Posizionamento Libero",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                )
+              : Container(),
           Row(
             children: <Widget>[
               Container(
@@ -74,8 +89,8 @@ class _Chessboard extends State<Chessboard> {
                   ),
                 ),
                 child: Grid(
-                  width: 320,
-                  height: 320,
+                  width: 310,
+                  height: 310,
                   row: 8,
                   column: 8,
                   piece_height: 32,
@@ -83,13 +98,23 @@ class _Chessboard extends State<Chessboard> {
                   grid_type: "grid",
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(5),
-                child: AdvantageBar(
-                  width: 10,
-                  height: 300,
-                  w_vantage: vantage,
-                ),
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: AdvantageBar(
+                      width: 10,
+                      height: 250,
+                      w_vantage: vantage,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () => {
+                      //TODO: apri poupap con scelta di rotazione di scacchiera, resa,
+                    },
+                  ),
+                ],
               ),
             ],
           ),

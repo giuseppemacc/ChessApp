@@ -90,22 +90,22 @@ class _BluetoothManagerWidgetState extends State<BluetoothManagerWidget> {
             ),
           ),
           //TODO: QUESTE DUE LIST TILE SONO DI ESEMPIO PER VERIFICARE IL CORRETTO FUNZIONAMENTO DEL BLUETOOTH POI LEVALE COGLIONE
-          ListTile(
-            title: Text("Output"),
-            trailing: RaisedButton(
-              child: Text("send"),
-              onPressed: () =>
-                  {Provider.of<BluetoothManager>(context).send("CB")},
-            ),
-          ),
-          ListTile(
-            title: Text("Input"),
-            trailing: Consumer<BluetoothManager>(
-              builder: (context, bleManager, child) {
-                return Text(bleManager.recived);
-              },
-            ),
-          ),
+          //ListTile(
+          //  title: Text("Output"),
+          //  trailing: RaisedButton(
+          //    child: Text("send"),
+          //    onPressed: () =>
+          //        {Provider.of<BluetoothManager>(context).send("CB")},
+          //  ),
+          //),
+          //ListTile(
+          //  title: Text("Input"),
+          //  trailing: Consumer<BluetoothManager>(
+          //    builder: (context, bleManager, child) {
+          //      return Text(bleManager.recived);
+          //    },
+          //  ),
+          //),
         ],
       ),
     );

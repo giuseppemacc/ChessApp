@@ -11,7 +11,7 @@ class AdvantageBar extends StatelessWidget {
       children: <Widget>[
         Text("${100 - w_vantage}"),
         Padding(
-          padding: EdgeInsets.only(top: 5, bottom: 5),
+          padding: EdgeInsets.only(top: 1, bottom: 1),
           child: Container(
             width: width,
             height: height,

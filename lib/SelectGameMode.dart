@@ -74,7 +74,10 @@ class _SelectGameModeState extends State<SelectGameMode> {
                   child: Text("Gioca Posizione"),
                   onPressed: () {
                     setState(() {
-                      selection[0] = "giocaposizione";
+                      selection[0] = "GP";
+                      Provider.of<BluetoothManager>(context).sent = "GP";
+                      int count = 0;
+                      Navigator.of(context).popUntil((_) => count++ >= 2);
                     });
                   },
                 ),
@@ -216,7 +219,7 @@ class _SelectGameModeState extends State<SelectGameMode> {
                       ),
                     ),
                     RaisedButton(
-                      child: Text("Conferma $selection"),
+                      child: Text("Conferma"),
                       onPressed: ((selection[1] != null) &&
                               (selection[3] != null)) //&&
                           // Provider.of<BluetoothManager>(context)
@@ -233,11 +236,7 @@ class _SelectGameModeState extends State<SelectGameMode> {
                     ),
                   ],
                 )
-              : ListView(
-                  children: <Widget>[
-                    Text("..."),
-                  ],
-                ),
+              : null,
     );
   }
 }
