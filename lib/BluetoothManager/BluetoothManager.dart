@@ -20,7 +20,7 @@ class BluetoothManager extends ChangeNotifier {
   }
 
   BluetoothState bluetoothState = BluetoothState.UNKNOWN;
-  bool connectionState = false;
+  bool connectionState = true;
 
   void initBluetoothState() {
     FlutterBluetoothSerial.instance.state.then((state) {

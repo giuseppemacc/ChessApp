@@ -75,9 +75,9 @@ class _SelectGameModeState extends State<SelectGameMode> {
                   child: Text("Gioca Posizione"),
                   onPressed: () {
                     setState(() {
-                      selection[0] = "GP-FREE";
-                      Provider.of<BluetoothManager>(context).sent = "GP-FREE";
-                      Provider.of<BluetoothManager>(context).send("GP-FREE");
+                      selection[0] = "GPFREE";
+                      Provider.of<BluetoothManager>(context).sent = "GPFREE";
+                      Provider.of<BluetoothManager>(context).send("GPFREE");
                       int count = 0;
                       Navigator.of(context).popUntil((_) => count++ >= 2);
                     });

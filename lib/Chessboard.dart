@@ -11,6 +11,8 @@ class Chessboard extends StatefulWidget {
 
 class _Chessboard extends State<Chessboard> {
   double vantage = 50;
+  bool match = true;
+  //TODO: aggiungere un setstate per match che quando si è in partita diventi true (quindi quando vengono inviati NP-(W/B) o GP-(W/B))
   static Map chessboard = {
     "bpn": [
       ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
@@ -67,6 +69,13 @@ class _Chessboard extends State<Chessboard> {
     }
   }
 
+  void bleSetMatch() {
+    if (Provider.of<BluetoothManager>(context).sent.startsWith("NP-") ||
+        Provider.of<BluetoothManager>(context).sent.startsWith("GP-")) {
+      match = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     for (RadioStructure item in bwSelection) {
@@ -78,7 +87,7 @@ class _Chessboard extends State<Chessboard> {
     return Container(
       child: ListView(
         children: <Widget>[
-          (Provider.of<BluetoothManager>(context).sent == "GP-FREE")
+          (Provider.of<BluetoothManager>(context).sent == "GPFREE")
               ? Padding(
                   padding: EdgeInsets.only(bottom: 5, top: 10),
                   child: Text(
@@ -126,7 +135,7 @@ class _Chessboard extends State<Chessboard> {
                     onPressed: () => {
                       showDialog(
                           context: context,
-                          builder: (BuildContext context) {
+                          builder: (BuildContext contextPopup) {
                             return AlertDialog(
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -135,19 +144,28 @@ class _Chessboard extends State<Chessboard> {
                                     title: Text("Ruota Scacchiera"),
                                     trailing: IconButton(
                                       icon: Icon(Icons.import_export),
-                                      onPressed: () {
-                                        // send some value to rotate this chessboard
-                                        Navigator.of(context).pop();
-                                      },
+                                      onPressed:
+                                          Provider.of<BluetoothManager>(context)
+                                                  .connectionState
+                                              ? () {
+                                                  Navigator.of(contextPopup)
+                                                      .pop();
+                                                }
+                                              : null,
                                     ),
                                   ),
                                   ListTile(
                                     title: Text("Arrenditi"),
                                     trailing: IconButton(
                                       icon: Icon(Icons.cancel),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
+                                      onPressed: (Provider.of<BluetoothManager>(
+                                                      context)
+                                                  .connectionState &&
+                                              (match == true))
+                                          ? () {
+                                              Navigator.of(contextPopup).pop();
+                                            }
+                                          : null,
                                     ),
                                   ),
                                 ],
@@ -166,7 +184,6 @@ class _Chessboard extends State<Chessboard> {
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 border: Border.all(),
-                //borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               child: Padding(
                 padding: EdgeInsets.all(10),
@@ -195,7 +212,7 @@ class _Chessboard extends State<Chessboard> {
               ),
             ),
           ),
-          (Provider.of<BluetoothManager>(context).sent == "GP-FREE")
+          (Provider.of<BluetoothManager>(context).sent == "GPFREE")
               ? Column(
                   children: <Widget>[
                     Row(
