@@ -15,22 +15,22 @@ class _Chessboard extends State<Chessboard> {
   //TODO: aggiungere un setstate per match che quando si è in partita diventi true (quindi quando vengono inviati NP-(W/B) o GP-(W/B))
   static Map chessboard = {
     "bpn": [
-      ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-      ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
-    ], //[List<String>(9), List<String>(9)],
+      List<String>(8), //["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
+      List<String>(8), //["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
+    ],
     "grid": [
-      ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-      ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
+      ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"], //List<String>(8),
+      ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"], //List<String>(8),
       List<String>(8),
       List<String>(8),
       List<String>(8),
       List<String>(8),
-      ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
-      ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
+      ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"], //List<String>(8),
+      ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"], //List<String>(8),
     ],
     "wpn": [
-      ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
-      ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
+      List<String>(8), //["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
+      List<String>(8), //["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
     ],
   };
 
@@ -44,36 +44,34 @@ class _Chessboard extends State<Chessboard> {
 
   String bwValue = "";
 
-  void setPiece(String type_string, int x, int y, String value) {
+  void setPiece(String type_string, int y, int x, String value) {
     chessboard[type_string][y][x] = value;
+  }
+
+  void bleValueManagement() {
+    setState(() {
+      while (Provider.of<BluetoothManager>(context).buffer.isNotEmpty) {
+        String recived = Provider.of<BluetoothManager>(context).recived;
+        String sent = Provider.of<BluetoothManager>(context).sent;
+
+        if (recived.startsWith("CB")) {
+          List<String> values = recived.split("-");
+          setPiece(values[1], int.parse(values[2]), int.parse(values[3]),
+              values[4].substring(0, 2));
+        } else if (recived.startsWith("V")) {
+          //set vantage
+        }
+
+        if (sent.startsWith("NP-") || sent.startsWith("GP-")) {
+          match = true;
+        }
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
-  }
-
-  void bleSetPiece() {
-    //CB-0-0-wK\r\n
-    if (Provider.of<BluetoothManager>(context).recived.startsWith("CB")) {
-      setState(() {
-        String rec = Provider.of<BluetoothManager>(context).recived;
-        setPiece("grid", int.parse(rec[3]), int.parse(rec[5]), rec[7] + rec[8]);
-        print("Scacchiera aggiornata");
-      });
-    } else if (Provider.of<BluetoothManager>(context).recived.startsWith("V")) {
-      setState(() {
-        vantage = double.parse(
-            Provider.of<BluetoothManager>(context).recived.substring(2));
-      });
-    }
-  }
-
-  void bleSetMatch() {
-    if (Provider.of<BluetoothManager>(context).sent.startsWith("NP-") ||
-        Provider.of<BluetoothManager>(context).sent.startsWith("GP-")) {
-      match = true;
-    }
   }
 
   @override
@@ -83,7 +81,7 @@ class _Chessboard extends State<Chessboard> {
         bwValue = item.value;
       }
     }
-    bleSetPiece();
+    bleValueManagement();
     return Container(
       child: ListView(
         children: <Widget>[

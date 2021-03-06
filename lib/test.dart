@@ -1,5 +1,4 @@
-String a = "V12.987";
-double b = double.parse(a.substring(1));
+String a = "loff";
 main(List<String> args) {
-  print(b);
+  print(a.substring(0, 2));
 }

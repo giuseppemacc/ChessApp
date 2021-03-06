@@ -8,10 +8,21 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 class BluetoothManager extends ChangeNotifier {
   String _recived = "";
   String _sent = "";
+  List<String> _buffer = new List<String>();
   BluetoothConnection connection;
 
   String get sent => _sent;
-  String get recived => _recived;
+  List<String> get buffer => _buffer;
+  String get recived {
+    if (_buffer.isNotEmpty) {
+      String val = _buffer[0];
+      _buffer.removeAt(0);
+      return val;
+    } else {
+      return "";
+    }
+  }
+
   bool get isConnected => connection != null && connection.isConnected;
 
   set sent(String value) {
@@ -20,7 +31,7 @@ class BluetoothManager extends ChangeNotifier {
   }
 
   BluetoothState bluetoothState = BluetoothState.UNKNOWN;
-  bool connectionState = true;
+  bool connectionState = false;
 
   void initBluetoothState() {
     FlutterBluetoothSerial.instance.state.then((state) {
@@ -77,6 +88,8 @@ class BluetoothManager extends ChangeNotifier {
     }
 
     _recived = String.fromCharCodes(buffer);
+    _buffer.add(_recived);
+    print(_buffer);
     notifyListeners();
   }
 
