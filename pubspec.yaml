@@ -21,6 +21,7 @@ dev_dependencies:
   provider: ^3.0.0+1
 
 
+
 flutter:
 
   uses-material-design: true

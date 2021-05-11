@@ -38,22 +38,17 @@ class _DrawerChessState extends State<DrawerChess> {
               },
             ),
             RaisedButton(
-              child: Text("Gioca"),
-              onPressed:
-                  true //Provider.of<BluetoothManager>(context).connectionState
-                      ? () {
-                          Navigator.push(context,
-                              MaterialPageRoute<void>(builder: (context) {
-                            return SafeArea(
-                                child: ChangeNotifierProvider<
-                                    BluetoothManager>.value(
-                              value: widget.bleManager,
-                              child: SelectGameMode(),
-                            ));
-                          }));
-                        }
-                      : null,
-            ),
+                child: Text("Gioca"),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute<void>(builder: (context) {
+                    return SafeArea(
+                        child: ChangeNotifierProvider<BluetoothManager>.value(
+                      value: widget.bleManager,
+                      child: SelectGameMode(),
+                    ));
+                  }));
+                }),
           ],
         ),
       ),

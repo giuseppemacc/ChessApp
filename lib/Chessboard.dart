@@ -1,53 +1,49 @@
+import 'package:ChessApp/DifficultySlider.dart';
+
 import './AdvantageBar.dart';
 import 'package:flutter/material.dart';
 import './BluetoothManager/BluetoothManager.dart';
 import 'package:provider/provider.dart';
-import './CustomRadio.dart';
+
+import 'package:flutter/widgets.dart';
 
 class Chessboard extends StatefulWidget {
+  final BluetoothManager bleManager;
+  Chessboard({this.bleManager});
   @override
   _Chessboard createState() => _Chessboard();
 }
 
 class _Chessboard extends State<Chessboard> {
-  double vantage = 50;
+  double vantage = 0.5;
   bool match = true;
   //TODO: aggiungere un setstate per match che quando si è in partita diventi true (quindi quando vengono inviati NP-(W/B) o GP-(W/B))
   static Map chessboard = {
-    "bpn": [
-      List<String>(8), //["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-      List<String>(8), //["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
+    "RIGHT": [
+      List<String>(8),
+      List<String>(8),
     ],
-    "grid": [
-      ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"], //List<String>(8),
-      ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"], //List<String>(8),
+    "GRID": [
       List<String>(8),
       List<String>(8),
       List<String>(8),
       List<String>(8),
-      ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"], //List<String>(8),
-      ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"], //List<String>(8),
+      List<String>(8),
+      List<String>(8),
+      List<String>(8),
+      List<String>(8),
     ],
-    "wpn": [
-      List<String>(8), //["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
-      List<String>(8), //["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
+    "LEFT": [
+      List<String>(8),
+      List<String>(8),
     ],
   };
-
-  // questi due variabili servono solo per il gioca posizione
-  List<RadioStructure> bwSelection = [
-    RadioStructure(
-        pathImage: "contents/images/chesspieces/chess24/wK.png", value: "W"),
-    RadioStructure(
-        pathImage: "contents/images/chesspieces/chess24/bK.png", value: "B"),
-  ];
-
-  String bwValue = "";
 
   void setPiece(String type_string, int y, int x, String value) {
     chessboard[type_string][y][x] = value;
   }
 
+  //CB-LEFT-00wP-00br...-RIGHT-O1wK...-GRID-80bn
   void bleValueManagement() {
     setState(() {
       while (Provider.of<BluetoothManager>(context).buffer.isNotEmpty) {
@@ -55,16 +51,37 @@ class _Chessboard extends State<Chessboard> {
         String sent = Provider.of<BluetoothManager>(context).sent;
 
         if (recived.startsWith("CB")) {
-          List<String> values = recived.split("-");
-          setPiece(values[1], int.parse(values[2]), int.parse(values[3]),
-              values[4].substring(0, 2));
-        } else if (recived.startsWith("V")) {
-          //set vantage
+          List<String> list_chessboard = recived.split("-");
+          print(list_chessboard);
+
+          for (var i = 2; i < 18; i++) {
+            String values = list_chessboard[i];
+            String piece = values.substring(2);
+            int y = int.parse(values[1]); // x
+            int x = int.parse(values[0]); // y
+            setPiece("LEFT", y, x, piece);
+          }
+          for (var i = 19; i < 35; i++) {
+            String values = list_chessboard[i];
+            String piece = values.substring(2);
+            int y = int.parse(values[1]); // x
+            int x = int.parse(values[0]); // y
+            setPiece("RIGHT", y, x, piece);
+          }
+          for (var i = 36; i < 100; i++) {
+            String values = list_chessboard[i];
+            String piece = values.substring(2);
+            int x = int.parse(values[1]);
+            int y = int.parse(values[0]);
+            setPiece("GRID", y, x, piece);
+          }
+        } else if (recived.startsWith("VANTAGE")) {
+          this.vantage = double.parse(recived.split("-")[1]) / 100;
         }
 
-        if (sent.startsWith("NP-") || sent.startsWith("GP-")) {
-          match = true;
-        }
+        // if (sent.startsWith("NP-") || sent.startsWith("GP-")) {
+        //   match = true;
+        // }
       }
     });
   }
@@ -76,103 +93,87 @@ class _Chessboard extends State<Chessboard> {
 
   @override
   Widget build(BuildContext context) {
-    for (RadioStructure item in bwSelection) {
-      if (item.state == true) {
-        bwValue = item.value;
-      }
-    }
     bleValueManagement();
     return Container(
       child: ListView(
         children: <Widget>[
-          (Provider.of<BluetoothManager>(context).sent == "GPFREE")
-              ? Padding(
-                  padding: EdgeInsets.only(bottom: 5, top: 10),
-                  child: Text(
-                    "Posizionamento Libero",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
-                )
-              : Container(),
           Row(
-            children: <Widget>[
+            children: [
               Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("contents/images/board.png"),
+                    image: AssetImage("contents/images/scacchiera_big.png"),
                     fit: BoxFit.fill,
                   ),
                 ),
-                child: Grid(
-                  width: 310,
-                  height: 310,
-                  row: 8,
-                  column: 8,
-                  piece_height: 32,
-                  piece_width: 32,
-                  grid_type: "grid",
+                child: Padding(
+                  padding: EdgeInsets.all(25),
+                  child: Grid(
+                    width: 310,
+                    height: 310,
+                    row: 8,
+                    column: 8,
+                    piece_height: 30,
+                    piece_width: 30,
+                    grid_type: "GRID",
+                  ),
                 ),
               ),
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: AdvantageBar(
-                      width: 10,
-                      height: 250,
-                      w_vantage: vantage,
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () => {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext contextPopup) {
-                            return AlertDialog(
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  ListTile(
-                                    title: Text("Ruota Scacchiera"),
-                                    trailing: IconButton(
-                                      icon: Icon(Icons.import_export),
-                                      onPressed:
-                                          Provider.of<BluetoothManager>(context)
-                                                  .connectionState
-                                              ? () {
-                                                  Navigator.of(contextPopup)
-                                                      .pop();
-                                                }
-                                              : null,
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: Text("Arrenditi"),
-                                    trailing: IconButton(
-                                      icon: Icon(Icons.cancel),
-                                      onPressed: (Provider.of<BluetoothManager>(
-                                                      context)
-                                                  .connectionState &&
-                                              (match == true))
-                                          ? () {
-                                              Navigator.of(contextPopup).pop();
-                                            }
-                                          : null,
-                                    ),
-                                  ),
-                                ],
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 5),
+                child: AdvantageBar(
+                  width: 300,
+                  height: 10,
+                  w_vantage: this.vantage,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () => {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext contextPopup) {
+                        return AlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              RaisedButton(
+                                child: Text("Arrenditi"),
+                                onPressed: () {
+                                  Provider.of<BluetoothManager>(context)
+                                      .send("SURRENDER");
+                                  Navigator.of(contextPopup).pop();
+                                },
                               ),
-                            );
-                          })
-                    },
-                  ),
-                ],
+                              Padding(
+                                padding: EdgeInsets.only(top: 40),
+                                child: Text(
+                                  "Livello Computer",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blueGrey,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: ChangeNotifierProvider<
+                                    BluetoothManager>.value(
+                                  value: widget.bleManager,
+                                  child: DifficultySlider(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      })
+                },
               ),
             ],
           ),
@@ -194,7 +195,7 @@ class _Chessboard extends State<Chessboard> {
                       column: 8,
                       piece_height: 20,
                       piece_width: 20,
-                      grid_type: "wpn",
+                      grid_type: "LEFT",
                     ),
                     Grid(
                       width: 250,
@@ -203,63 +204,13 @@ class _Chessboard extends State<Chessboard> {
                       column: 8,
                       piece_height: 20,
                       piece_width: 20,
-                      grid_type: "bpn",
+                      grid_type: "RIGHT",
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          (Provider.of<BluetoothManager>(context).sent == "GPFREE")
-              ? Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          child: Text("Gioca con:"),
-                          padding: EdgeInsets.only(right: 10),
-                        ),
-                        Row(
-                          children: List.generate(2, (i) {
-                            return Padding(
-                              padding: EdgeInsets.only(right: 10),
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                child: InkWell(
-                                  child: CustomRadio(bwSelection[i]),
-                                  onTap: () {
-                                    setState(() {
-                                      bwSelection.forEach(
-                                          (element) => element.state = false);
-                                      bwSelection[i].state = true;
-                                    });
-                                  },
-                                ),
-                              ),
-                            );
-                          }),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      child: Container(
-                        width: 100,
-                        height: 40,
-                        child: RaisedButton(
-                          onPressed: () => {
-                            Provider.of<BluetoothManager>(context)
-                                .send("GP-$bwValue")
-                          },
-                          child: Text("Gioca"),
-                        ),
-                      ),
-                      padding: EdgeInsets.only(top: 10, bottom: 10),
-                    ),
-                  ],
-                )
-              : Container(),
         ],
       ),
     );

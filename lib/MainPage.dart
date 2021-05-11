@@ -40,7 +40,10 @@ class _MainPage extends State<MainPage> {
             ],
           ),
         ),
-        body: Chessboard(),
+        body: ChangeNotifierProvider<BluetoothManager>.value(
+          value: bleManager,
+          child: Chessboard(bleManager: bleManager),
+        ),
         drawer: ChangeNotifierProvider<BluetoothManager>.value(
           value: bleManager,
           child: DrawerChess(bleManager: bleManager),

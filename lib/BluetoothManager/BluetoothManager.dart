@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class BluetoothManager extends ChangeNotifier {
+  double difficulty = 15;
   String _recived = "";
   String _sent = "";
   List<String> _buffer = new List<String>();
